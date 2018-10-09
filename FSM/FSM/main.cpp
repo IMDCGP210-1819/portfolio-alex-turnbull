@@ -1,89 +1,55 @@
 #include <iostream>
 #include <random>
 
-int main() {
-	FiniteStateMachine * FSM;
-	FSM = new FiniteStateMachine;
-	FSM->start();
-	while (true) {
-		FSM->update();
-	};
-}
+class FiniteStateMachine;
 
-class State {
-private:
-	FiniteStateMachine * fsm;
-
+class GenericState {
 public:
-	State(FiniteStateMachine fsm)
-	{
-		State fsm = fsm;
-	};
+	GenericState(){};
 
-	void OnEnter();
-	void Tick();
-	void OnExit();
-
+	virtual void OnEnter() = 0;
+	virtual void Tick() = 0;
+	virtual void OnExit() = 0;
 };
 
-class state_1 : public State {
-private:
-	FiniteStateMachine * fsm;
-
+class state_1 : public GenericState {
 public:
-	state_1() : State()
-	{
-		this->fsm = fsm;
-	};
-
+	state_1() : GenericState() {};
 	void OnEnter() {
-		std::cout << "entered State1" << std::endl;
-	};
-
-	void Tick() {
-		int randomValue = rand() % 2;
-		if (randomValue == 1) {
-			fsm->changeState(new state_2);
-		}
-	};
-
-	void OnExit() {
-		std::cout << "left State1" << std::endl;
+		std::cout << "Entered State 1" << std::endl;
 	}
 
-};
-
-class state_2 : public State {
-private:
-	FiniteStateMachine * fsm;
-
-public:
-	state_2() : State(){
-		this->fsm = fsm;
-	};
-
-	void OnEnter() {
-		std::cout << "entered State1" << std::endl;
-	};
-
 	void Tick() {
-		int randomValue = rand() % 2;
-		if (randomValue == 1) {
-			fsm->changeState(new state_1);
-		}
-	};
-
-	void OnExit() {
-		std::cout << "left State1" << std::endl;
+		
 	}
 
+	void OnExit() {
+		std::cout << "Left State 1" << std::endl;
+	}
 };
 
+class state_2 : public GenericState {
+public:
+	state_2() : GenericState() {};
+	void OnEnter() {
+		std::cout << "Entered State 2" << std::endl;
+	}
+
+	void Tick() {
+		
+	}
+
+	void OnExit() {
+		std::cout << "Left State 2" << std::endl;
+	}
+};
 
 class FiniteStateMachine {
 private:
-	State * currentState;
+	GenericState * currentState;
 public:
+	FiniteStateMachine() {};
+
 	void start() {
 		changeState(new state_1);
 	}
@@ -91,7 +57,7 @@ public:
 	void update() {
 		currentState->Tick();
 	}
-	void changeState(State * newState) {
+	void changeState(GenericState * newState) {
 
 		if (currentState != nullptr)
 			currentState->OnExit();
@@ -102,3 +68,14 @@ public:
 	}
 };
 
+FiniteStateMachine * FSM = new FiniteStateMachine();
+
+int main() {
+
+	FSM->start();
+	while (true) {
+		FSM->update();
+	}
+
+	return 1;
+};
